@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Artefact - Four-Wheel Mobile Motion System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== TOKENS (shared with the TrayBot portfolio) ===== */
+:root{--ink:#0A1424;--panel:#14243F;--line:#27395A;--cyan:#75C8E8;--blue:#6C9DEB;--amber:#F3B52C;--text:#E8EEF8;--mute:#A3B2C6;
+--head:'Space Grotesk',system-ui,sans-serif;--body:'Inter',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--ink);color:var(--text);line-height:1.7;overflow-x:hidden}
+:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+#progress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--cyan),var(--amber));z-index:60}
+/* ===== BACKGROUND ===== */
+#bgfx{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none;background:radial-gradient(120% 90% at 50% 0%,#0F2447 0%,#0A1424 55%,#060D19 100%)}
+#bgfx .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.45}
+#bgfx .b1{width:46vw;height:46vw;left:-12vw;top:-10vw;background:#2A5BB0;animation:d1 26s ease-in-out infinite alternate}
+#bgfx .b2{width:38vw;height:38vw;right:-10vw;top:28vh;background:#0F8FA8;opacity:.28;animation:d2 32s ease-in-out infinite alternate}
+#bgfx .b3{width:34vw;height:34vw;left:30vw;bottom:-16vw;background:#B8801A;opacity:.18;animation:d3 38s ease-in-out infinite alternate}
+@keyframes d1{to{transform:translate(18vw,14vh) scale(1.2)}}@keyframes d2{to{transform:translate(-16vw,-18vh) scale(.85)}}@keyframes d3{to{transform:translate(-22vw,-10vh) scale(1.25)}}
+#bgfx .g1,#bgfx .g2{position:absolute;inset:-60px;background-image:linear-gradient(rgba(108,157,235,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(108,157,235,.07) 1px,transparent 1px);background-size:40px 40px;-webkit-mask-image:radial-gradient(ellipse at 50% 40%,#000 25%,transparent 80%);mask-image:radial-gradient(ellipse at 50% 40%,#000 25%,transparent 80%);animation:gm 22s linear infinite}
+#bgfx .g2{background-size:200px 200px;background-image:linear-gradient(rgba(243,181,44,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(243,181,44,.09) 1px,transparent 1px);animation-duration:44s}
+@keyframes gm{to{transform:translate(40px,40px)}}
+#bgfx .vig{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 45%,rgba(4,9,18,.7) 100%)}
+#bg{position:fixed;inset:0;z-index:-1;width:100%;height:100%}
+/* ===== REVEAL ===== */
+.rv{opacity:0;transform:translateY(34px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0s)}
+.rv.in{opacity:1;transform:none}
+/* ===== HERO ===== */
+.hero{position:relative;min-height:92vh;display:flex;align-items:center;overflow:hidden}
+.hero:before,.hero:after{content:"";position:absolute;border-radius:50%;border:1px solid rgba(117,200,232,.18);pointer-events:none}
+.hero:before{width:420px;height:420px;right:-140px;top:-160px;animation:spin 40s linear infinite}
+.hero:after{width:300px;height:300px;left:-140px;bottom:-150px;border-style:dashed;animation:spin 55s linear infinite reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hero-inner{position:relative;z-index:2;width:100%;max-width:1180px;margin:auto;padding:110px 20px 80px;display:grid;grid-template-columns:1.3fr .8fr;gap:30px;align-items:center}
+@media(max-width:900px){.hero-inner{grid-template-columns:1fr;padding-top:100px}.hero{min-height:auto}}
+.label{display:inline-block;padding:9px 16px;border:1px solid rgba(117,200,232,.35);background:rgba(117,200,232,.08);color:var(--cyan);border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;margin-bottom:22px;animation:pop .8s .1s both}
+@keyframes pop{from{opacity:0;transform:scale(.85)}}
+.hero h1{font:700 clamp(42px,6.4vw,84px)/1.03 var(--head);letter-spacing:-.02em;margin-bottom:18px}
+.hero h1 .w{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.08em}
+.hero h1 .w i{display:inline-block;font-style:normal;transform:translateY(110%);animation:up .9s cubic-bezier(.2,.8,.2,1) forwards}
+.hero h1 .c i{color:var(--cyan)}
+@keyframes up{to{transform:none}}
+.hero p{max-width:900px;color:#d8edf7;font-size:clamp(15px,1.8vw,18px);animation:pop 1s .9s both}
+/* animated top-view robot (decorative) */
+.bot{width:100%;max-width:340px;margin:auto;filter:drop-shadow(0 20px 40px rgba(0,0,0,.5));animation:float 6s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-12px) rotate(1.5deg)}}
+.bot .wh{transform-box:fill-box;transform-origin:center;animation:spin 2s linear infinite}
+.bot .ray{stroke-dasharray:5 6;animation:dash 1.2s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-22}}
+.bot .sw{transform-origin:100px 52px;animation:sw 3s ease-in-out infinite}
+@keyframes sw{0%,100%{transform:rotate(-30deg);opacity:.4}50%{transform:rotate(30deg);opacity:1}}
+/* ===== LAYOUT ===== */
+.container{max-width:1180px;margin:auto;padding:50px clamp(16px,3vw,24px) 70px}
+.section-label{color:var(--cyan);text-transform:uppercase;letter-spacing:1.7px;font-size:12px;font-weight:800;margin-bottom:10px}
+h2{font:700 clamp(28px,4vw,44px)/1.12 var(--head);margin-bottom:14px}
+/* ===== OVERVIEW ===== */
+.intro-card{position:relative;padding:clamp(24px,4vw,40px);margin-bottom:30px;border-radius:20px;background:linear-gradient(135deg,rgba(20,36,63,.95),rgba(16,30,53,.95));border:1px solid var(--line);overflow:hidden}
+.intro-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(var(--cyan),var(--amber))}
+.intro-card h2{font-size:clamp(26px,3.4vw,38px)}
+.intro-card p{color:#C3D0E1;font-size:clamp(14px,1.5vw,16px);max-width:900px}
+/* ===== FEATURE CARDS ===== */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.feature-card{position:relative;padding:26px;border-radius:18px;background:linear-gradient(135deg,rgba(20,36,63,.92),rgba(16,30,53,.92));border:1px solid var(--line);overflow:hidden;transition:transform .3s ease,border-color .3s,box-shadow .3s;cursor:default}
+.feature-card:before{content:"";position:absolute;inset:0;background:radial-gradient(280px circle at var(--mx,50%) var(--my,0%),rgba(117,200,232,.2),transparent 60%);opacity:0;transition:.3s}
+.feature-card:after{content:"";position:absolute;left:0;bottom:0;height:3px;width:0;background:linear-gradient(90deg,var(--cyan),var(--amber));transition:width .5s}
+.feature-card:hover{border-color:var(--cyan);box-shadow:0 18px 40px rgba(0,0,0,.35)}
+.feature-card:hover:before{opacity:1}.feature-card:hover:after{width:100%}
+.feature-card>*{position:relative}
+.feature-number{display:inline-block;padding:5px 11px;border-radius:20px;background:rgba(243,181,44,.12);border:1px solid rgba(243,181,44,.4);color:var(--amber);font-size:11px;font-weight:800;letter-spacing:1px;margin-bottom:12px}
+.feature-card h3{font:700 clamp(18px,2vw,22px)/1.3 var(--head);margin-bottom:10px;transition:color .3s}
+.feature-card:hover h3{color:var(--cyan)}
+.feature-card p{font-size:14px;color:#B4C2D6;line-height:1.75}
+/* ===== CONTROL FLOW ===== */
+.flow-card{margin-top:30px;padding:clamp(24px,4vw,40px);border-radius:20px;background:linear-gradient(135deg,rgba(20,36,63,.95),rgba(16,30,53,.95));border:1px solid var(--line)}
+.flow-card .section-label,.flow-card h2{text-align:center}
+.flow{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:10px;margin-top:26px}
+.flow-box{min-width:132px;padding:14px 18px;border-radius:12px;background:#1C3358;border:1px solid #35568A;color:#fff;text-align:center;font-size:13px;font-weight:600;transition:.35s;cursor:pointer}
+.flow-box.on{background:var(--amber);border-color:var(--amber);color:#2b1d00;transform:translateY(-6px) scale(1.07);box-shadow:0 12px 28px rgba(243,181,44,.35)}
+.arrow{font-size:24px;color:#4A6FA8;font-weight:700;transition:.35s}
+.arrow.on{color:var(--amber);transform:translateX(5px)}
+.loop{display:block;width:100%;max-width:780px;height:46px;margin:6px auto 0}
+.loop path{fill:none;stroke:#35568A;stroke-width:2;stroke-dasharray:6 7;animation:dash 1.4s linear infinite}
+@media(max-width:760px){.flow{flex-direction:column}.arrow{transform:rotate(90deg)}.arrow.on{transform:rotate(90deg) translateX(5px)}.loop{display:none}}
+/* ===== OVERALL ===== */
+.overall{position:relative;margin-top:30px;padding:clamp(28px,4vw,44px);border-radius:20px;text-align:center;background:var(--panel);overflow:hidden}
+.overall:before{content:"";position:absolute;inset:-60%;background:conic-gradient(from 0deg,transparent 0 70%,var(--cyan),var(--amber),transparent);animation:spin 6s linear infinite}
+.overall:after{content:"";position:absolute;inset:2px;border-radius:18px;background:linear-gradient(135deg,#14284A,#0F1F38)}
+.overall>*{position:relative;z-index:1}
+.overall h2{color:var(--cyan);font-size:clamp(26px,3.4vw,38px)}
+.overall p{color:#C3D0E1;font-size:15px;max-width:850px;margin:auto}
+/* ===== FOOTER ===== */
+footer{background:#070E1B;border-top:1px solid var(--line);color:#9eb7c6;text-align:center;padding:26px 20px;font-size:12px}
+footer strong{color:#fff}
+#top{position:fixed;right:18px;bottom:18px;z-index:40;width:44px;height:44px;border-radius:50%;border:0;background:var(--amber);color:#2b1d00;font-weight:800;cursor:pointer;opacity:0;transform:translateY(20px);transition:.3s}
+#top.show{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.rv{opacity:1;transform:none}.hero h1 .w i{transform:none}}
+</style>
+</head>
+<body>
+<div id="bgfx" aria-hidden="true"><i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i><div class="g1"></div><div class="g2"></div><div class="vig"></div></div>
+<canvas id="bg" aria-hidden="true"></canvas>
+<div id="progress"></div>
+
+<!-- ===== HERO ===== -->
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="label">  Artefact</div>
+      <h1 id="h1" aria-label="Four-Wheel Mobile Motion System"><span class="c">Four-Wheel</span> Mobile Motion System</h1>
+      <p>Mechatronic platform for stable, controlled and repeatable four-wheel mobile motion.</p>
+    </div>
+    <svg class="bot" viewBox="0 0 200 240" aria-hidden="true">
+      <g class="sw"><path d="M100 52 L40 6 M100 52 L160 6" stroke="#78d4f5" stroke-width="2" fill="none" class="ray"/></g>
+      <g fill="#0A1018" stroke="#8A97A9" stroke-width="2"><rect x="22" y="70" width="26" height="54" rx="8"/><rect x="152" y="70" width="26" height="54" rx="8"/><rect x="22" y="142" width="26" height="54" rx="8"/><rect x="152" y="142" width="26" height="54" rx="8"/></g>
+      <g class="wh" stroke="#A7B4C4" stroke-width="2"><path d="M28 80h14M28 92h14M28 104h14M158 80h14M158 92h14M158 104h14M28 152h14M28 164h14M28 176h14M158 152h14M158 164h14M158 176h14"/></g>
+      <rect x="42" y="62" width="116" height="144" rx="18" fill="#2A4770" stroke="#9DB7DB" stroke-width="3"/>
+      <rect x="52" y="74" width="96" height="120" rx="12" fill="#14243F" stroke="#4F76AE"/>
+      <rect x="64" y="90" width="72" height="80" rx="8" fill="#DCEBFF" stroke="#fff" stroke-width="2"/>
+      <g fill="#3E659D"><rect x="72" y="98" width="24" height="24" rx="3"/><rect x="104" y="98" width="24" height="24" rx="3"/><rect x="72" y="130" width="24" height="24" rx="3"/><rect x="104" y="130" width="24" height="24" rx="3"/></g>
+      <circle cx="68" cy="66" r="5" fill="#F3B52C"/><circle cx="132" cy="66" r="5" fill="#F3B52C"/>
+      <rect x="84" y="38" width="32" height="20" rx="8" fill="#DFEDFF" stroke="#4A7FD6" stroke-width="3"/><circle cx="100" cy="48" r="6" fill="#fff"/>
+    </svg>
+  </div>
+</header>
+
+<main class="container">
+  <!-- OVERVIEW -->
+  <section class="card intro-card rv">
+    <div class="section-label">Artefact Overview</div>
+    <h2>Four-Wheel Mobile Motion System</h2>
+    <p>The Four-Wheel Mobile Motion System is a mechatronic platform designed to achieve stable, controlled, and repeatable movement using four wheels. It integrates the chassis, drivetrain, motors, wheel kinematics, motion dynamics, and feedback control.</p>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="grid">
+    <article class="feature-card rv" style="--d:0s"><div class="feature-number">01 • STRUCTURE</div><h3>Chassis and Stability</h3><p>The chassis supports the wheels, motors, battery, electronics, and payload. Weight distribution, centre of gravity, wheelbase, track width, and rigidity influence stability during movement and turning.</p></article>
+    <article class="feature-card rv" style="--d:.1s"><div class="feature-number">02 • DRIVE</div><h3>Four-Wheel Drivetrain</h3><p>The four wheels provide support and traction. Motors generate torque, and the drivetrain transfers it to the wheels. Proper wheel arrangement ensures effective load distribution and ground contact.</p></article>
+    <article class="feature-card rv" style="--d:0s"><div class="feature-number">03 • CONTROL</div><h3>Drive Coordination</h3><p>The controller coordinates wheel speed and direction to produce forward, reverse, turning, and stopping motions. In a differential-drive-type arrangement, different left- and right-side wheel speeds produce turning.</p></article>
+    <article class="feature-card rv" style="--d:.1s"><div class="feature-number">04 • MODELLING</div><h3>Kinematics and Dynamics</h3><p>Kinematics relates wheel motion to robot motion using wheel radius, wheelbase, track width, and velocity. Dynamics considers mass, payload, motor torque, traction, and resistance on robot motion and stability.</p></article>
+    <article class="feature-card rv" style="--d:0s"><div class="feature-number">05 • FEEDBACK</div><h3>Motor Control and Feedback</h3><p>The motor driver controls motor power according to controller commands. Wheel encoders provide rotation and distance feedback, allowing comparison of desired and actual motion for improved accuracy and repeatability.</p></article>
+    <article class="feature-card rv" style="--d:.1s"><div class="feature-number">06 • VALIDATION</div><h3>Performance Validation</h3><p>The system is evaluated through experimental testing to verify speed, motion accuracy, turning behaviour, stability, distance accuracy, payload handling, and repeatability under defined operating conditions.</p></article>
+  </section>
+
+  <!-- CONTROL FLOW -->
+  <section class="card flow-card rv">
+    <div class="section-label">Control Architecture</div>
+    <h2>Motion Control and Feedback Flow</h2>
+    <div class="flow" id="flow">
+      <div class="flow-box">Controller</div><div class="arrow">→</div>
+      <div class="flow-box">Motor Driver</div><div class="arrow">→</div>
+      <div class="flow-box">Motors</div><div class="arrow">→</div>
+      <div class="flow-box">Wheels</div><div class="arrow">→</div>
+      <div class="flow-box">Robot Motion</div><div class="arrow">→</div>
+      <div class="flow-box">Feedback</div>
+    </div>
+    <svg class="loop" viewBox="0 0 780 46" preserveAspectRatio="none" aria-hidden="true"><path d="M690 2 C690 44 90 44 90 4"/></svg>
+  </section>
+
+  <!-- OVERALL -->
+  <section class="overall rv">
+    <h2>Overall System Integration</h2>
+    <p>The artefact integrates chassis, four-wheel drivetrain, motor actuation, kinematics, dynamics, feedback control, and validation to engineer a reliable four-wheel mobile motion system.</p>
+  </section>
+</main>
+
+<footer><strong>TrayBot • Mini Project </strong></footer>
+<button id="top" aria-label="Back to top">↑</button>
+
+<script>
+(function(){
+'use strict';
+var $=function(s){return document.querySelector(s)},$$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
+
+/* Hero title: word-by-word entrance (text is unchanged) */
+(function(){var h=$('#h1'),o='';
+  [['Four-Wheel','w c'],['Mobile','w'],['Motion','w'],['System','w']].forEach(function(w,i){o+='<span class="'+w[1]+'"><i style="animation-delay:'+(.2+i*.15)+'s">'+w[0]+'</i></span> '});h.innerHTML=o})();
+
+/* Reveal + progress + back to top */
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.15});
+$$('.rv').forEach(function(e){io.observe(e)});
+addEventListener('scroll',function(){var h=document.documentElement.scrollHeight-innerHeight;$('#progress').style.width=(h>0?scrollY/h*100:0)+'%';$('#top').classList.toggle('show',scrollY>600)},{passive:true});
+$('#top').onclick=function(){scrollTo({top:0,behavior:'smooth'})};
+
+/* Card spotlight */
+$$('.feature-card').forEach(function(c){c.addEventListener('pointermove',function(e){var r=c.getBoundingClientRect();c.style.setProperty('--mx',(e.clientX-r.left)/r.width*100+'%');c.style.setProperty('--my',(e.clientY-r.top)/r.height*100+'%');
+  if(e.pointerType==='mouse')c.style.transform='perspective(800px) rotateX('+((.5-(e.clientY-r.top)/r.height)*5)+'deg) rotateY('+(((e.clientX-r.left)/r.width-.5)*6)+'deg) translateY(-3px)'});
+  c.addEventListener('pointerleave',function(){c.style.transform=''})});
+
+/* Control flow: a pulse travels through the blocks; hover or tap to jump */
+(function(){var boxes=$$('.flow-box'),arrows=$$('.arrow'),i=0,t;
+  function show(n){i=n;boxes.forEach(function(b,k){b.classList.toggle('on',k===n)});arrows.forEach(function(a,k){a.classList.toggle('on',k===n-1||(n===0&&false))})}
+  function run(){clearInterval(t);t=setInterval(function(){show((i+1)%boxes.length)},1000)}
+  boxes.forEach(function(b,k){b.addEventListener('mouseenter',function(){clearInterval(t);show(k)});b.addEventListener('click',function(){clearInterval(t);show(k)});b.addEventListener('mouseleave',run)});
+  show(0);run()})();
+
+/* LiDAR radar background */
+(function(){var cv=$('#bg'),x=cv.getContext('2d'),W,H,cx,cy,R,P=[],ang=0,px=0,py=0,tx=0,ty=0,still=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  function size(){W=cv.width=innerWidth;H=cv.height=innerHeight;cx=W*(W>800?.72:.5);cy=H*.42;R=Math.hypot(W,H)*.62;P=[];
+    for(var i=0;i<Math.min(420,Math.round(W*H/4200));i++)P.push({a:Math.random()*6.2832,r:Math.pow(Math.random(),.7)*R,s:Math.random()*1.6+.6,j:Math.random()*6.2832})}
+  size();addEventListener('resize',size);addEventListener('pointermove',function(e){tx=(e.clientX/W-.5)*40;ty=(e.clientY/H-.5)*40});
+  function frame(){x.clearRect(0,0,W,H);px+=(tx-px)*.05;py+=(ty-py)*.05;var ox=cx+px,oy=cy+py;
+    x.lineWidth=1;for(var k=1;k<=7;k++){x.strokeStyle='rgba(108,157,235,'+(k%2?.10:.06)+')';x.beginPath();x.arc(ox,oy,R*k/7,0,6.2832);x.stroke()}
+    x.strokeStyle='rgba(108,157,235,.06)';for(var d=0;d<12;d++){var q=d*Math.PI/6;x.beginPath();x.moveTo(ox,oy);x.lineTo(ox+Math.cos(q)*R,oy+Math.sin(q)*R);x.stroke()}
+    var g=x.createRadialGradient(ox,oy,0,ox,oy,R);g.addColorStop(0,'rgba(243,181,44,.20)');g.addColorStop(1,'rgba(108,157,235,0)');
+    x.fillStyle=g;x.beginPath();x.moveTo(ox,oy);x.arc(ox,oy,R,ang-.55,ang);x.closePath();x.fill();
+    x.strokeStyle='rgba(243,181,44,.55)';x.beginPath();x.moveTo(ox,oy);x.lineTo(ox+Math.cos(ang)*R,oy+Math.sin(ang)*R);x.stroke();
+    for(var i=0;i<P.length;i++){var p=P[i],df=(ang-p.a)%6.2832;if(df<0)df+=6.2832;var gl=still?.35:Math.max(0,1-df/2.6),al=.10+gl*.85;
+      x.fillStyle=gl>.55?'rgba(243,181,44,'+al+')':'rgba(122,170,245,'+al+')';x.beginPath();x.arc(ox+Math.cos(p.a)*p.r+Math.sin(p.j+ang)*.6,oy+Math.sin(p.a)*p.r,p.s*(1+gl*.9),0,6.2832);x.fill()}
+    x.fillStyle='rgba(243,181,44,.9)';x.beginPath();x.arc(ox,oy,3.5,0,6.2832);x.fill();
+    if(!still){ang+=.0105;requestAnimationFrame(frame)}}
+  frame()})();
+})();
+</script>
+</body>
+</html>
